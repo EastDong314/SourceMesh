@@ -1,0 +1,56 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model CollectedData {
+  id          String   @id @default(uuid())
+  source      String   @db.VarChar(100)
+  type        String   @db.VarChar(50)
+  title       String?  @db.Text
+  content     Json
+  url         String?  @db.Text
+  metadata    Json?
+  collectedAt DateTime
+  createdAt   DateTime @default(now())
+
+  @@index([source])
+  @@index([collectedAt])
+  @@index([source, collectedAt])
+}
+
+model DataSource {
+  id          String   @id @default(uuid())
+  name        String   @unique @db.VarChar(100)
+  url         String   @db.Text
+  enabled     Boolean  @default(true)
+  schedule    String?  @db.VarChar(100)
+  selector    String?  @db.Text
+  fields      Json?
+  headers     Json?
+  timeout     Int      @default(30000)
+  retries     Int      @default(3)
+  lastRunAt   DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([name])
+  @@index([enabled])
+}
+
+model CollectionLog {
+  id          String   @id @default(uuid())
+  source      String   @db.VarChar(100)
+  status      String   @db.VarChar(20) // 'success' | 'failed' | 'partial'
+  itemsCount  Int      @default(0)
+  duration    Int      // milliseconds
+  error       String?  @db.Text
+  createdAt   DateTime @default(now())
+
+  @@index([source])
+  @@index([createdAt])
+}

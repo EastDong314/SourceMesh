@@ -1,4 +1,9 @@
-﻿node_modules/
-playwright/.cache/
+node_modules/
+dist/
 .env
+*.log
+playwright/.cache/
 .DS_Store
+coverage/
+.vscode/
+.idea/
